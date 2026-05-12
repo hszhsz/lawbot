@@ -34,23 +34,23 @@ export function InputBar({
       width="100%"
       paddingX={1}
       paddingY={0}
-      borderStyle="round"
+      borderStyle="single"
       borderColor="#374151"
     >
       <Box marginRight={1}>
-        <Text color="#DC2626">
+        <Text color={isProcessing ? "#F59E0B" : "#10B981"}>
           {isProcessing ? "⏳" : "▸"}
         </Text>
       </Box>
       <Box flexGrow={1}>
         {isProcessing ? (
-          <Text dimColor>等待回复中... / Waiting for response...</Text>
+          <Text dimColor>处理中... / Processing...</Text>
         ) : (
           <TextInput
             value={value}
             onChange={setValue}
             onSubmit={handleSubmit}
-            placeholder="输入法律问题... / Ask a legal question..."
+            placeholder="输入法律问题 / 输入 /help 查看命令..."
           />
         )}
       </Box>

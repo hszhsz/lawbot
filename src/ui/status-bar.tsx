@@ -4,9 +4,11 @@ import { Box, Text } from "ink";
 interface StatusBarProps {
   text: string;
   modelName: string;
+  tokenCount?: number;
+  slashHint?: boolean;
 }
 
-export function StatusBar({ text, modelName }: StatusBarProps) {
+export function StatusBar({ text, modelName, tokenCount, slashHint }: StatusBarProps) {
   return (
     <Box
       width="100%"
@@ -18,12 +20,19 @@ export function StatusBar({ text, modelName }: StatusBarProps) {
       <Box flexGrow={1}>
         <Text dimColor>{text}</Text>
       </Box>
+      {tokenCount !== undefined && tokenCount > 0 && (
+        <Box marginLeft={2}>
+          <Text dimColor>Tokens: {tokenCount.toLocaleString()}</Text>
+        </Box>
+      )}
       <Box marginLeft={2}>
-        <Text dimColor>Model: {modelName}</Text>
+        <Text dimColor>{modelName}</Text>
       </Box>
-      <Box marginLeft={2}>
-        <Text dimColor>Ctrl+C 退出</Text>
-      </Box>
+      {slashHint && (
+        <Box marginLeft={2}>
+          <Text dimColor>/help · Ctrl+C 退出</Text>
+        </Box>
+      )}
     </Box>
   );
 }
