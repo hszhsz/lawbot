@@ -90,8 +90,9 @@ provider:
   baseURL: https://api.deepseek.com/v1 # API 地址
 
 model:
-  default: deepseek-v4-pro
+  default: deepseek-chat
   # Other options: claude-sonnet-4-20250514, gpt-4o, qwen-max
+  # NOTE: 推理模型 (deepseek-reasoner/deepseek-v4-pro) 需要 SDK v5+ 才支持工具调用
 
 agent:
   maxSteps: 10       # 最大工具调用步数

@@ -7,7 +7,7 @@ export const defaultConfig: Config = {
     baseURL: "https://api.deepseek.com/v1",
   },
   model: {
-    default: "deepseek-v4-pro",
+    default: "deepseek-chat",
   },
   agent: {
     maxSteps: 10,
