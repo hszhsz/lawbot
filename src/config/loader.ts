@@ -25,6 +25,10 @@ function loadDotEnv(): Record<string, string> {
       value = value.slice(1, -1);
     }
     vars[key] = value;
+    // Inject into process.env so downstream code (providers, etc.) can read it
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
   }
   return vars;
 }

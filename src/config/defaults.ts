@@ -3,6 +3,7 @@ import type { Config } from "./types.js";
 export const defaultConfig: Config = {
   provider: {
     type: "openai-compatible",
+    apiKey: "${DEEPSEEK_API_KEY}",
     baseURL: "https://api.deepseek.com/v1",
   },
   model: {
