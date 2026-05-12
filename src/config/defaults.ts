@@ -2,10 +2,11 @@ import type { Config } from "./types.js";
 
 export const defaultConfig: Config = {
   provider: {
-    type: "anthropic",
+    type: "openai-compatible",
+    baseURL: "https://api.deepseek.com/v1",
   },
   model: {
-    default: "claude-sonnet-4-20250514",
+    default: "deepseek-v4-pro",
   },
   agent: {
     maxSteps: 10,

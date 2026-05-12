@@ -22,7 +22,11 @@ export function getModel(config: Config): LanguageModelV1 {
     case "openai-compatible": {
       // For DeepSeek, Qwen, Ollama, etc.
       const openai = createOpenAI({
-        apiKey: provider.apiKey || process.env.OPENAI_API_KEY || "not-needed",
+        apiKey:
+          provider.apiKey ||
+          process.env.DEEPSEEK_API_KEY ||
+          process.env.OPENAI_API_KEY ||
+          "not-needed",
         baseURL: provider.baseURL || "http://localhost:11434/v1",
       });
       return openai(config.model.default);

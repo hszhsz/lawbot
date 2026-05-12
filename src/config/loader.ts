@@ -1,10 +1,49 @@
 import fs from "node:fs";
+import path from "node:path";
 import yaml from "js-yaml";
 import { getConfigPath } from "../utils/storage.js";
 import { AppConfig, type Config } from "./types.js";
 import { defaultConfig } from "./defaults.js";
 
+const PROJECT_ROOT = path.resolve(import.meta.dirname, "../../");
+
+function loadDotEnv(): Record<string, string> {
+  const envFile = path.join(PROJECT_ROOT, ".env");
+  if (!fs.existsSync(envFile)) return {};
+
+  const vars: Record<string, string> = {};
+  const content = fs.readFileSync(envFile, "utf-8");
+  for (const line of content.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eqIdx = trimmed.indexOf("=");
+    if (eqIdx === -1) continue;
+    const key = trimmed.slice(0, eqIdx).trim();
+    let value = trimmed.slice(eqIdx + 1).trim();
+    // Strip quotes
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    vars[key] = value;
+  }
+  return vars;
+}
+
+function resolveEnvVars(value: string, envVars: Record<string, string>): string {
+  return value.replace(/\$\{(\w+)\}/g, (_, name) => envVars[name] ?? process.env[name] ?? "");
+}
+
+function resolveConfigEnvVars(config: Config, envVars: Record<string, string>): void {
+  if (config.provider.apiKey) {
+    config.provider.apiKey = resolveEnvVars(config.provider.apiKey, envVars);
+  }
+  if (config.provider.baseURL) {
+    config.provider.baseURL = resolveEnvVars(config.provider.baseURL, envVars);
+  }
+}
+
 export function loadConfig(modelOverride?: string): Config {
+  const envVars = loadDotEnv();
   const configPath = getConfigPath();
 
   let userConfig: Partial<Config> = {};
@@ -31,13 +70,8 @@ export function loadConfig(modelOverride?: string): Config {
     );
   }
 
-  // Resolve env vars for apiKey
   const config = result.data;
-  if (config.provider.apiKey && config.provider.apiKey.startsWith("${") && config.provider.apiKey.endsWith("}")) {
-    const envVar = config.provider.apiKey.slice(2, -1);
-    config.provider.apiKey = process.env[envVar] ?? "";
-  }
-
+  resolveConfigEnvVars(config, envVars);
   return config;
 }
 
@@ -47,13 +81,13 @@ export function createDefaultConfigFile(): string {
 # 文档 / Docs: https://github.com/hszhsz/lawbot
 
 provider:
-  type: anthropic              # anthropic | openai | openai-compatible
-  apiKey: \${ANTHROPIC_API_KEY} # 环境变量 / environment variable
-  # baseURL: ""                # 兼容模式必填 / required for compatible
+  type: openai-compatible              # anthropic | openai | openai-compatible
+  apiKey: \${DEEPSEEK_API_KEY}          # 环境变量 / environment variable (支持 .env 文件)
+  baseURL: https://api.deepseek.com/v1 # API 地址
 
 model:
-  default: claude-sonnet-4-20250514
-  # Other options: claude-opus-4-20250514, deepseek-chat, gpt-4o
+  default: deepseek-v4-pro
+  # Other options: claude-sonnet-4-20250514, gpt-4o, qwen-max
 
 agent:
   maxSteps: 10       # 最大工具调用步数
