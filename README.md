@@ -1,6 +1,6 @@
 # ⚖ 法 · Lawbot
 
-> 专业中文法律 AI 智能体 — 律师的助手，普通用户的法律顾问  
+> 专业中文法律 AI 智能体 — 律师的助手，普通用户的法律顾问
 > Professional Chinese Legal AI Agent — Your AI-powered legal assistant and advisor
 
 [English](#english) | [中文](#chinese)
@@ -29,10 +29,12 @@ cd lawbot
 # 安装依赖
 pnpm install
 
-# 构建
-pnpm build
+# 配置 API Key
+cp .env.example .env
+# 编辑 .env，填入 DEEPSEEK_API_KEY=sk-xxxxxxxx
 
-# 运行
+# 构建 & 运行
+pnpm build
 pnpm start
 
 # 或全局安装
@@ -42,15 +44,28 @@ lawbot
 
 ### 配置
 
-首次运行会自动创建配置模板 `~/.lawbot/config.yaml`：
+**方式一：项目根目录 `.env` 文件（推荐）**
+
+```bash
+# .env
+DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
+```
+
+无需其他配置即可使用，默认模型为 `deepseek-v4-pro`。
+
+**方式二：`~/.lawbot/config.yaml` 配置文件**
+
+首次运行会自动创建，也可手动编辑：
 
 ```yaml
 provider:
-  type: anthropic              # anthropic | openai | openai-compatible
-  apiKey: ${ANTHROPIC_API_KEY} # 从环境变量读取
+  type: openai-compatible         # anthropic | openai | openai-compatible
+  apiKey: ${DEEPSEEK_API_KEY}     # 支持 .env / 环境变量引用
+  baseURL: https://api.deepseek.com/v1
 
 model:
-  default: claude-sonnet-4-20250514
+  default: deepseek-v4-pro
+  # 其他可选: claude-sonnet-4-20250514, gpt-4o, qwen-max
 
 agent:
   maxSteps: 10
@@ -61,10 +76,17 @@ ui:
   theme: dark
 ```
 
-支持的模型提供商：
-- **Anthropic** (Claude Sonnet/Opus) — 推荐，中文法律推理能力最强
-- **OpenAI** (GPT-4o, GPT-5)
-- **OpenAI 兼容** — 支持 DeepSeek、Qwen、Ollama 等
+**API Key 读取优先级：**
+`.env 文件` > `shell 环境变量`
+
+**支持的模型提供商：**
+
+| Provider | 说明 |
+|----------|------|
+| DeepSeek (deepseek-v4-pro) | 默认，中文能力强，性价比高 |
+| Anthropic (Claude Sonnet/Opus) | 中文法律推理最佳 |
+| OpenAI (GPT-4o, GPT-5) | 通用推理强 |
+| OpenAI 兼容 | Qwen、Ollama 等任意兼容接口 |
 
 ### 快捷键
 
@@ -130,6 +152,11 @@ Lawbot is a professional Chinese legal AI agent running in your terminal. With a
 git clone https://github.com/hszhsz/lawbot.git
 cd lawbot
 pnpm install
+
+# Set up API key
+cp .env.example .env
+# Edit .env, add your DEEPSEEK_API_KEY=sk-xxxxxxxx
+
 pnpm build
 pnpm start
 
@@ -140,15 +167,28 @@ lawbot
 
 ### Configuration
 
-On first run, a default config is created at `~/.lawbot/config.yaml`:
+**Option 1: Project root `.env` file (recommended)**
+
+```bash
+# .env
+DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
+```
+
+No other config needed — defaults to `deepseek-v4-pro`.
+
+**Option 2: `~/.lawbot/config.yaml`**
+
+Auto-created on first run, or edit manually:
 
 ```yaml
 provider:
-  type: anthropic
-  apiKey: ${ANTHROPIC_API_KEY}
+  type: openai-compatible
+  apiKey: ${DEEPSEEK_API_KEY}     # Supports .env / env variable expansion
+  baseURL: https://api.deepseek.com/v1
 
 model:
-  default: claude-sonnet-4-20250514
+  default: deepseek-v4-pro
+  # Alternatives: claude-sonnet-4-20250514, gpt-4o, qwen-max
 
 agent:
   maxSteps: 10
@@ -159,10 +199,17 @@ ui:
   theme: dark
 ```
 
-Supported providers:
-- **Anthropic** (Claude models) — Recommended for Chinese legal reasoning
-- **OpenAI** (GPT models)
-- **OpenAI-compatible** — DeepSeek, Qwen, Ollama, etc.
+**API key resolution order:**
+`.env file` > `shell environment variables`
+
+**Supported providers:**
+
+| Provider | Notes |
+|----------|-------|
+| DeepSeek (deepseek-v4-pro) | Default, strong Chinese capability |
+| Anthropic (Claude models) | Best Chinese legal reasoning |
+| OpenAI (GPT models) | Strong general reasoning |
+| OpenAI-compatible | Qwen, Ollama, or any compatible endpoint |
 
 ### Keyboard Shortcuts
 
